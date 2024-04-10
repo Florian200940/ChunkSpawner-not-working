@@ -1,0 +1,52 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ChunkSpawner : MonoBehaviour
+{
+    public List<GameObject> chunkPrefabs; // Lijst met chunk prefabs
+    public Transform spawnPoint; // Startpunt voor spawnen van chunks
+    private GameObject currentChunk;
+    private ChunkController currentChunkController;
+
+    void Start()
+    {
+        SpawnChunk();
+    }
+
+    void Update()
+    {
+        if (currentChunkController != null && currentChunkController.chunkEnd.position.x < spawnPoint.position.x)
+        {
+            SpawnChunk();
+            Debug.Log("void update werkt");
+        }        
+    }
+
+    void SpawnChunk()
+    {
+        // Willekeurig kies een chunk prefab uit de lijst
+        GameObject chunkPrefab = chunkPrefabs[Random.Range(0, chunkPrefabs.Count)];
+
+        // Spawn de gekozen chunk op het spawnPoint
+        GameObject newChunk = Instantiate(chunkPrefab, spawnPoint.position, Quaternion.identity);
+        currentChunkController = newChunk.GetComponent<ChunkController>();
+
+        // Als er al een huidige chunk is, zorg ervoor dat het eindpunt van de vorige chunk verbonden is met het beginpunt van de nieuwe chunk
+        if (currentChunk != null && currentChunkController != null)
+        {
+            currentChunkController.ConnectToNextChunk(currentChunkController.chunkStart);
+            Debug.Log("Beginchunk werkt");
+        }
+
+        // Update de huidige chunk
+        currentChunk = newChunk;
+
+        Debug.Log("ChunkUpdate werkt");
+
+    }
+}
+
+
+//DM me on discord if you want to help me: fquartz        
+
